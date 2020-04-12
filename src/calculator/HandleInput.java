@@ -2,6 +2,7 @@ package calculator;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 
 import javax.swing.JFrame;
 import javax.swing.JTextField;
@@ -13,10 +14,13 @@ public class HandleInput implements ActionListener{
 	
 	HandleInput(JTextField display){
 		this.display=display;
+		oper="=";
 	}
 	
-	String oper,num1,num2;
+	String oper,num1,num2;	
 	boolean num1set,num2set,operset;
+	
+	
 	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
@@ -46,46 +50,87 @@ public class HandleInput implements ActionListener{
 
 	private void handleOperator(String key) {
 		// TODO Auto-generated method stub
-		oper=key;
-		num1=display.getText();
-		num1set=true; //储存数字1
+		
+		
 		if(key.equals("=")) {
-			if(num1set&&operset) {
+//			if(num1set&&operset&&num2set) {
+//			if(num1set) {
+//			有运算符就直接计算
+			if(!oper.equals("=")) {
 				num2=display.getText();
-				display.setText(cal(num1,oper,num2));
+				num1=cal(num1,oper,num2);
 			}
+			//重置运算符&显示
+				display.setText(num1);
+				oper="=";
 			
+			//输入一个数按等于号
+//			if(num1set&&operset&&!num2set) {
+				
+//			}
+		}else {
+			num1=display.getText(); //储存数字1			
+			oper=key;
 		}
 	}
 
 	private String cal(String num1, String oper, String num2) {
 		// TODO Auto-generated method stub
+		BigDecimal bnum1,bnum2,ans = null;
+		bnum1 = new BigDecimal(num1);
+		bnum2 = new BigDecimal(num2);
 		
-		return null;
+		if(oper.equals("+")) {
+			ans=bnum1.add(bnum2);
+		}
+		else if(oper.equals("-")) {
+			ans=bnum1.subtract(bnum2);
+		}
+		else if(oper.equals("*")) {
+			ans=bnum1.multiply(bnum2);
+		}
+		else if(oper.equals("/")) {
+			ans=bnum1.divide(bnum2);
+		}
+		else
+			ans=bnum1;
+		
+		return ans.toString();
 	}
 
 	private void handleNumber(String key) {
 		// TODO Auto-generated method stub
-		display.setText(display.getText()+key);
+		
+			
+//			num1set=true;
+		if(!oper.equals("=")||display.getText().equals("0"))
+			display.setText(key);
+		else
+			display.setText(display.getText()+key);
 		
 			
 	}
 
 	private void handleC() {
 		// TODO Auto-generated method stub
-
-			
 		display.setText("0");
+		num1="0";
+		num2="0";
+		oper="=";
 		
 	}
 
 	private void handleBackspace() {
 		// TODO Auto-generated method stub
-		String dis=display.getText();
-		dis=dis.substring(0,-1);
-		if(dis.length()<1)
-			dis="0";
-		display.setText(dis);
+		String str=display.getText();
+		
+		if(str.length()<=1)
+			display.setText("0");
+		else {
+			str=str.substring(0, str.length()-1);
+			display.setText(str);
+		}
+		
 	}
 	
 }
